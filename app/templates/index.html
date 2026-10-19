@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hệ thống Quản lý Hợp đồng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fa;
+            margin: 0;
+            padding: 30px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ddd;
+        }
+        h1 { color: #1769aa; text-align: center; }
+        h2 { color: #333; }
+        form.add-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        input, select {
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button, .edit-btn {
+            background: #1769aa;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .delete-btn { background: #d32f2f; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th { background: #1769aa; color: white; }
+        .table-wrap { overflow-x: auto; }
+        .actions { white-space: nowrap; }
+        .actions form { display: inline; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>HỆ THỐNG QUẢN LÝ HỢP ĐỒNG</h1>
+
+    <h2>Thêm hợp đồng mới</h2>
+    <form class="add-form" action="/add" method="POST">
+        <input name="code" placeholder="Mã hợp đồng" required>
+        <input name="name" placeholder="Tên hợp đồng" required>
+        <input name="partner" placeholder="Đối tác" required>
+        <input name="signed_date" type="date" required>
+        <input name="value" type="number" min="0" step="0.01"
+               placeholder="Giá trị hợp đồng (VNĐ)" required>
+        <select name="status">
+            <option>Đang thực hiện</option>
+            <option>Hoàn thành</option>
+            <option>Đã hủy</option>
+        </select>
+        <button type="submit">Thêm hợp đồng</button>
+    </form>
+
+    <h2>Danh sách hợp đồng</h2>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên hợp đồng</th>
+                    <th>Đối tác</th>
+                    <th>Ngày ký</th>
+                    <th>Giá trị (VNĐ)</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contract in contracts %}
+                <tr>
+                    <td>{{ contract.code }}</td>
+                    <td>{{ contract.name }}</td>
+                    <td>{{ contract.partner }}</td>
+                    <td>{{ contract.signed_date }}</td>
+                    <td>{{ "{:,.0f}".format(contract.value) }}</td>
+                    <td>{{ contract.status }}</td>
+                    <td class="actions">
+                        <a class="edit-btn"
+                           href="/edit/{{ contract.id }}">Sửa</a>
+                        <form action="/delete/{{ contract.id }}"
+                              method="POST"
+                              onsubmit="return confirm('Xóa hợp đồng này?')">
+                            <button class="delete-btn" type="submit">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align:center">
+                        Chưa có hợp đồng nào.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
