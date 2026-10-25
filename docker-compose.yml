@@ -1,4 +1,13 @@
 services:
+  website:
+    build: .
+    container_name: contract-website
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app/contracts.db:/app/app/contracts.db
+    restart: unless-stopped
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
